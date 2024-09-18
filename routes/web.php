@@ -11,4 +11,4 @@ Route::get('/dashboard', function () {
     return view('back.dashboard.index');
 });
 
-Route::resource('/categories', CategoryController::class)->only(['index', 'update', 'create', 'show', 'store', 'destroy']);
+Route::resource('/categories', CategoryController::class)->only(['index', 'update', 'store', 'destroy']);

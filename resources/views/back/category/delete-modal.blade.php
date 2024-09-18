@@ -1,6 +1,4 @@
 @foreach ($categories as $item)
-
-
 <!-- Modal -->
 <div class="modal fade" id="modalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -16,7 +14,6 @@
                 <div class="mb-3">
                     <p>Are you sure want to delete this {{ $item->name }} category?</p>
                 </div>
-
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
