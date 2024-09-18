@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Back;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -12,7 +14,9 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        //
+        return view('back.article.index', [
+            'articles' => Article::with('Category')->latest()->get(),
+        ]);
     }
 
     /**

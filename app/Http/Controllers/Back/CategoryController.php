@@ -19,13 +19,6 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function show(string $id)
-    {
-        return view('back.category.show', [
-            'category' => Category::find($id),
-        ]);
-    }
-
     /**
      * Store a newly created resource in storage.
      */

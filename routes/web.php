@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Back\ArticleController;
 use App\Http\Controllers\Back\CategoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,3 +13,4 @@ Route::get('/dashboard', function () {
 });
 
 Route::resource('/categories', CategoryController::class)->only(['index', 'update', 'store', 'destroy']);
+Route::resource('/articles', ArticleController::class);
