@@ -3,6 +3,8 @@
 {{-- pemanggilan css dinamis --}}
 @push('css')
     <link rel="stylesheet" href="https//cdn.datatables.net/2.1.6/css/dataTables.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.6/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 @endpush
 
 @section('title', 'Articles Admin Management')
@@ -13,7 +15,7 @@
         <h1 class="h2">Articles</h1>
       </div>
       <div class="mt-3">
-        <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#modalCreate">Add Category</button>
+        <a href="{{ route('articles.create') }}" class="btn btn-success mb-2">Add Category</a>
         @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -34,12 +36,12 @@
                     <th>Category</th>
                     <th>Views</th>
                     <th>Status</th>
-                    <th>Publish At</th>
+                    <th>Publish Date</th>
                     <th>Function</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($articles as $article)
+                {{-- @foreach($articles as $article)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $article->title }}</td>
@@ -59,7 +61,7 @@
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                @endforeach --}}
             </tbody>
         </table>
        </div>
@@ -74,7 +76,20 @@
 
 <script>
     $(document).ready(function() {
-        $('#dataTable').DataTable();
+        $('#dataTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ url()->current() }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                { data: 'title', name: 'title' },
+                { data: 'category_id', name: 'category_id' },
+                { data: 'views', name: 'views' },
+                { data: 'status', name: 'status' },
+                { data: 'publish_date', name: 'publish_date' },
+                { data: 'action', name: 'action' },
+            ]
+        });
     } );
 </script>
 @endpush
