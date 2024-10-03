@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class ArticleController extends Controller
@@ -29,10 +31,10 @@ class ArticleController extends Controller
                 })
                 ->addColumn('action', function ($article) {
                     return '<div class="text-center">
-                        <button data-id="' . $article->id . '" class="btn btn-info btn-sm" id="delete">Detail</button>
-                        <button data-id="' . $article->id . '" class="btn btn-success btn-sm" id="delete">Edit</button>
-                        <button data-id="' . $article->id . '" class="btn btn-danger btn-sm" id="delete">Delete</button>
-                        </div>';
+                        <a href="' . url('articles/' . $article->id) . '" class="btn btn-primary btn-sm">Detail</a>
+                        <a href="articles/' . $article->id . '/edit" class="btn btn-success btn-sm" id="edit">Edit</a>
+                        <a href="#" onclick="deleteArticle(this)"  data-id="' . $article->id . '" class="btn btn-danger btn-sm">Delete</a>
+                    </div>';
                 })
                 ->addIndexColumn()
                 // panggil kustom kolom
@@ -62,7 +64,7 @@ class ArticleController extends Controller
         $data = $request->validated();
         $file = $request->file('img');
         $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-        $file->storeAs('public/front/', $fileName);
+        $file->storeAs('public/back/', $fileName);
 
         $data['img'] = $fileName;
         $data['slug'] = Str::slug($data['title']);
@@ -77,7 +79,9 @@ class ArticleController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return view('back.article.show', [
+            'article' => Article::find($id),
+        ]);
     }
 
     /**
@@ -85,15 +89,36 @@ class ArticleController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('back.article.update', [
+            'article' => Article::find($id),
+            'categories' => Category::get(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateArticleRequest $request, string $id)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/back/', $fileName);
+
+            // unlink img
+            Storage::delete('public/back/' . $request->oldImg);
+            $data['img'] = $fileName;
+        } else {
+            $data['img'] = $request->oldImg;
+        }
+
+        $data['slug'] = Str::slug($data['title']);
+
+        Article::find($id)->update($data);
+
+        return redirect(url('articles'))->with('success', 'Data Berhasil Di Update');
     }
 
     /**
@@ -101,6 +126,10 @@ class ArticleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $article = Article::find($id);
+        Storage::delete('public/back/' . $article->img);
+        $article->delete();
+
+        return response()->json(['message' => 'Data Berhasil Di Hapus']);
     }
 }

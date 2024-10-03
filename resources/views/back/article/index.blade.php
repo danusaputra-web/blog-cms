@@ -28,6 +28,9 @@
             </ul>
         </div>
         @endif
+
+        <div class="swal" data-swal="{{ session('success') }}" ></div>
+
         <table class="table table-striped table-bordered"  id="dataTable">
             <thead>
                 <tr>
@@ -73,6 +76,62 @@
 <script src="https://cdn.datatables.net/2.1.6/js/dataTables.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/2.1.6/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.1.6/js/dataTables.bootstrap5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{{-- alert success --}}
+
+<script>
+    const swal = $('.swal').data('swal');
+    if(swal){
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: swal,
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+
+    function deleteArticle(e){
+        let id = e.getAttribute('data-id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/articles/'+ id ,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    success: function(){
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        ).then((result) => {
+                            window.location.href='/articles';
+                        });
+                    },
+                    error: function(){
+                        Swal.fire(
+                            'Error!',
+                            'Your file has not been deleted.',
+                            'error'
+                        )
+                    }
+                });
+            }
+        });
+    }
+</script>
 
 <script>
     $(document).ready(function() {
